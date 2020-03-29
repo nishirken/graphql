@@ -53,7 +53,7 @@ document formatter defs
     executableDefinition (ExecutableDefinition x) acc = definition formatter x : acc
     executableDefinition _ acc = acc
 
--- | Converts a 'Full.Definition' into a string.
+-- | Converts a 'Full.ExecutableDefinition' into a string.
 definition :: Formatter -> ExecutableDefinition -> Lazy.Text
 definition formatter x
     | Pretty _ <- formatter = Lazy.Text.snoc (encodeDefinition x) '\n'
@@ -64,6 +64,7 @@ definition formatter x
     encodeDefinition (Full.DefinitionFragment fragment)
         = fragmentDefinition formatter fragment
 
+-- | Converts a 'Full.OperationDefinition into a string.
 operationDefinition :: Formatter -> Full.OperationDefinition -> Lazy.Text
 operationDefinition formatter (Full.SelectionSet sels)
     = selectionSet formatter sels
@@ -72,6 +73,7 @@ operationDefinition formatter (Full.OperationDefinition Full.Query name vars dir
 operationDefinition formatter (Full.OperationDefinition Full.Mutation name vars dirs sels)
     = "mutation " <> node formatter name vars dirs sels
 
+-- | Converts a Full.Query or Full.Mutation into a string.
 node :: Formatter ->
     Maybe Full.Name ->
     [Full.VariableDefinition] ->
@@ -134,6 +136,7 @@ selection formatter = Lazy.Text.append indent' . encodeSelection
 colon :: Formatter -> Lazy.Text
 colon formatter = eitherFormat formatter ": " ":"
 
+-- | Converts Full.Field into a string
 field :: Formatter ->
     Maybe Full.Name ->
     Full.Name ->
