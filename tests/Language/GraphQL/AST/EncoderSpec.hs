@@ -15,12 +15,23 @@ spec = do
         context "minified" $ do
             it "escapes \\" $
                 value minified (String "\\") `shouldBe` "\"\\\\\""
-            it "escapes quotes" $
+            it "escapes double quotes" $
                 value minified (String "\"") `shouldBe` "\"\\\"\""
+            it "escapes \\n" $
+                value minified (String "\n") `shouldBe` "\"\\n\""
+            it "escapes \\r" $
+                value minified (String "\r") `shouldBe` "\"\\r\""
+            it "escapes \\f" $
+                value minified (String "\f") `shouldBe` "\"\\f\""
             it "escapes backspace" $
                 value minified (String "a\bc") `shouldBe` "\"a\\bc\""
-            it "escapes Unicode" $
-                value minified (String "\0") `shouldBe` "\"\\u0000\""
+            context "escapes Unicode for chars less than 0010" $ do
+                it "0000" $ value minified (String "\0") `shouldBe` "\"\\u0000\""
+                it "0009" $ value minified (String "\0009") `shouldBe` "\"\\u0009\""
+--            context "escapes Unicode for char less than 0020" $ do
+--                it "0010" $ value minified (String "\0010") `shouldBe` "\"\\u0010\""
+--                it "0019" $ value minified (String "\0019") `shouldBe` "\"\\u0019\""
+--                it "0085" $ value minified (String "\0085") `shouldBe` "\"\n\""
 
         context "pretty" $ do
             it "uses strings for short string values" $

@@ -245,6 +245,7 @@ escape char'
     | char' == '\"' = Builder.fromString "\\\""
     | char' == '\b' = Builder.fromString "\\b"
     | char' == '\f' = Builder.fromString "\\f"
+    | char' == '\n' = Builder.fromString "\\n"
     | char' == '\r' = Builder.fromString "\\r"
     | char' < '\x0010' = unicode  "\\u000" char'
     | char' < '\x0020' = unicode "\\u00" char'
