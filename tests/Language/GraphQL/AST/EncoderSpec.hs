@@ -31,12 +31,14 @@ spec = do
             it "escapes backspace" $
                 value minified (String "a\bc") `shouldBe` "\"a\\bc\""
             context "escapes Unicode for chars less than 0010" $ do
-                it "0000" $ value minified (String "\0") `shouldBe` "\"\\u0000\""
-                it "0009" $ value minified (String "\0009") `shouldBe` "\"\\u0009\""
---            context "escapes Unicode for char less than 0020" $ do
---                it "0010" $ value minified (String "\0010") `shouldBe` "\"\\u0010\""
---                it "0019" $ value minified (String "\0019") `shouldBe` "\"\\u0019\""
---                it "0085" $ value minified (String "\0085") `shouldBe` "\"\n\""
+                it "Null" $ value minified (String "\0") `shouldBe` "\"\\u0000\""
+                it "tab" $ value minified (String "\0009") `shouldBe` "\"\\u0009\""
+            context "escapes Unicode for char less than 0020" $ do
+                it "newline" $ value minified (String "\0010") `shouldBe` "\"\\n\""
+                it "device control" $ value minified (String "\0019") `shouldBe` "\"\\u0013\""
+            context "encodes without escape" $ do
+                it "space" $ value minified (String "\0032") `shouldBe` "\" \""
+                it "U" $ value minified (String "\0085") `shouldBe` "\"U\""
 
         context "pretty" $ do
             it "uses strings for short string values" $
