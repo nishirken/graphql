@@ -226,8 +226,10 @@ stringValue Minified string = Builder.toLazyText
     quote = Builder.singleton '\"'
     escape' '\n' = Builder.fromString "\\n"
     escape' char = escape char
-stringValue (Pretty indentation) string = byStringType $ Text.lines string
+stringValue (Pretty indentation) string = byStringType lines
   where
+    lines = filter (not . Text.null) $ Text.split (\c -> c == '\n' || c == '\r') $ onlySingleNewline string
+    onlySingleNewline = Text.replace "\n" "\r\n"
     byStringType [] = "\"\""
     byStringType [line] = Builder.toLazyText
         $ quote <> Text.foldr (mappend . escape) quote line

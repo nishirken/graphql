@@ -45,9 +45,24 @@ spec = do
         context "pretty" $ do
             it "uses strings for short string values" $
                 value pretty (String "Short text") `shouldBe` "\"Short text\""
-            it "uses block strings for text with new lines" $
+            it "uses block strings for text with new lines, with newline symbol" $
                 value pretty (String "Line 1\nLine 2")
-                    `shouldBe` "\"\"\"\n  Line 1\n  Line 2\n\"\"\""
+                    `shouldBe` [r|"""
+  Line 1
+  Line 2
+"""|]
+            it "uses block strings for text with new lines, with CR symbol" $
+                value pretty (String "Line 1\rLine 2")
+                    `shouldBe` [r|"""
+  Line 1
+  Line 2
+"""|]
+            it "uses block strings for text with new lines, with CR symbol followed by newline" $
+                value pretty (String "Line 1\r\nLine 2")
+                    `shouldBe` [r|"""
+  Line 1
+  Line 2
+"""|]
             it "escapes \\ in short strings" $
                 value pretty (String "\\") `shouldBe` "\"\\\\\""
 
