@@ -247,6 +247,7 @@ escape char'
     | char' == '\f' = Builder.fromString "\\f"
     | char' == '\n' = Builder.fromString "\\n"
     | char' == '\r' = Builder.fromString "\\r"
+    | char' == '\t' = Builder.fromString "\\t"
     | char' < '\x0010' = unicode  "\\u000" char'
     | char' < '\x0020' = unicode "\\u00" char'
     | otherwise = Builder.singleton char'

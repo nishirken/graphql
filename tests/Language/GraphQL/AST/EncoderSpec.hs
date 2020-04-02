@@ -28,11 +28,13 @@ spec = do
                 value minified (String "\r") `shouldBe` "\"\\r\""
             it "escapes \\f" $
                 value minified (String "\f") `shouldBe` "\"\\f\""
+            it "escapes \\t" $
+                value minified (String "\t") `shouldBe` "\"\\t\""
             it "escapes backspace" $
                 value minified (String "a\bc") `shouldBe` "\"a\\bc\""
             context "escapes Unicode for chars less than 0010" $ do
                 it "Null" $ value minified (String "\0") `shouldBe` "\"\\u0000\""
-                it "tab" $ value minified (String "\0009") `shouldBe` "\"\\u0009\""
+                it "bell" $ value minified (String "\0007") `shouldBe` "\"\\u0007\""
             context "escapes Unicode for char less than 0020" $ do
                 it "newline" $ value minified (String "\0010") `shouldBe` "\"\\n\""
                 it "device control" $ value minified (String "\0019") `shouldBe` "\"\\u0013\""
