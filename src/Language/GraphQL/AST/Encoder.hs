@@ -221,11 +221,9 @@ booleanValue False = "false"
 
 stringValue :: Formatter -> Text -> Lazy.Text
 stringValue Minified string = Builder.toLazyText
-    $ quote <> Text.foldr (mappend . escape') quote string
+    $ quote <> Text.foldr (mappend . escape) quote string
   where
     quote = Builder.singleton '\"'
-    escape' '\n' = Builder.fromString "\\n"
-    escape' char = escape char
 stringValue (Pretty indentation) string = byStringType lines
   where
     lines = filter (not . Text.null) $ Text.split (\c -> c == '\n' || c == '\r') $ onlySingleNewline string
