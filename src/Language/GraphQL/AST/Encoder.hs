@@ -34,6 +34,7 @@ import Language.GraphQL.AST.Document
 data Formatter
     = Minified
     | Pretty Word
+    deriving (Eq, Show)
 
 -- | Constructs a formatter for pretty printing.
 pretty :: Formatter
