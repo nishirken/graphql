@@ -115,8 +115,11 @@ selectionSet formatter
 selectionSetOpt :: Formatter -> Full.SelectionSetOpt -> Lazy.Text
 selectionSetOpt formatter = bracesList formatter $ selection formatter
 
+indentSymbol :: Lazy.Text
+indentSymbol = "  "
+
 indent :: (Integral a) => a -> Lazy.Text
-indent indentation = Lazy.Text.replicate (fromIntegral indentation) "  "
+indent indentation = Lazy.Text.replicate (fromIntegral indentation) indentSymbol
 
 selection :: Formatter -> Full.Selection -> Lazy.Text
 selection formatter = Lazy.Text.append indent' . encodeSelection
@@ -219,26 +222,39 @@ booleanValue :: Bool -> Lazy.Text
 booleanValue True  = "true"
 booleanValue False = "false"
 
+quote :: Builder.Builder
+quote = Builder.singleton '\"'
+
+oneLine :: Text -> Builder
+oneLine string = quote <> Text.foldr (mappend . escape) quote string
+
 stringValue :: Formatter -> Text -> Lazy.Text
 stringValue Minified string = Builder.toLazyText
     $ quote <> Text.foldr (mappend . escape) quote string
-  where
-    quote = Builder.singleton '\"'
-stringValue (Pretty indentation) string = byStringType lines
-  where
-    lines = filter (not . Text.null) $ Text.split (\c -> c == '\n' || c == '\r') $ onlySingleNewline string
-    onlySingleNewline = Text.replace "\n" "\r\n"
-    byStringType [] = "\"\""
-    byStringType [line] = Builder.toLazyText
-        $ quote <> Text.foldr (mappend . escape) quote line
-    byStringType lines' = "\"\"\"\n"
-        <> Lazy.Text.unlines (transformLine <$> lines')
-        <> indent indentation
-        <> "\"\"\""
-    transformLine = (indent (indentation + 1) <>)
-        . Lazy.Text.fromStrict
-        . Text.replace "\"\"\"" "\\\"\"\""
-    quote = Builder.singleton '\"'
+stringValue (Pretty indentation) string =
+  if hasEscaped string
+  then stringValue Minified string
+  else Builder.toLazyText $ encoded lines
+    where
+      isNewline char = char == '\n' || char == '\r'
+      hasEscaped = Text.any (\x -> not $ isAllowed x)
+      isAllowed char =
+          if char < '\x0020' then char == '\t' || isNewline char
+          else char /= '\x007F'
+
+      tripleQuote = Builder.fromText "\"\"\""
+      start = tripleQuote <> Builder.singleton '\n'
+      end = tripleQuote
+
+      lines = map Builder.fromText $ Text.split isNewline (Text.strip $ Text.replace "\r\n" "\n" string)
+      encoded [] = oneLine string
+      encoded [line] = oneLine string
+      encoded lines' = start <> transformLines lines' <> end
+      transformLines lines' = foldr (\line acc -> line <> Builder.singleton '\n' <> acc) mempty $ map transformLine lines'
+      transformLine line =
+        if Lazy.Text.null (Builder.toLazyText line)
+        then line
+        else (Builder.fromLazyText $ indent (indentation + 1)) <> line
 
 escape :: Char -> Builder
 escape char'
