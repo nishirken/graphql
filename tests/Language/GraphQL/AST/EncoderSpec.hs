@@ -7,11 +7,9 @@ module Language.GraphQL.AST.EncoderSpec
 import Language.GraphQL.AST
 import Language.GraphQL.AST.Encoder
 import Test.Hspec (Spec, context, describe, it, shouldBe, shouldStartWith, shouldEndWith, shouldNotContain)
-import Test.QuickCheck (property, choose, elements, generate, oneof, forAll, quickCheck)
+import Test.QuickCheck (choose, oneof, forAll)
 import Text.RawString.QQ (r)
-import Data.Text.Lazy (Text, pack, cons, toStrict, snoc, unpack)
-import qualified Data.Text.Lazy as Lazy
-import Control.Monad.IO.Class (liftIO)
+import Data.Text.Lazy (cons, toStrict, unpack)
 
 spec :: Spec
 spec = do
@@ -79,7 +77,6 @@ spec = do
                 forAll genNotAllowedSymbol $ \x -> do
                     let
                       rawValue = "Short \n" <> cons x "text"
-                      expected = "\"Short \n" <> snoc "" x <> "text\""
                       encoded = value pretty (String $ toStrict rawValue)
                     shouldStartWith (unpack encoded) "\""
                     shouldEndWith (unpack encoded) "\""

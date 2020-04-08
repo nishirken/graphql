@@ -246,8 +246,8 @@ stringValue (Pretty indentation) string =
 
       lines = map Builder.fromText $ Text.split isNewline (Text.strip $ Text.replace "\r\n" "\n" string)
       encoded [] = oneLine string
-      encoded [line] = oneLine string
-      encoded lines' = start <> transformLines lines' <> end
+      encoded [_] = oneLine string
+      encoded lines'' = start <> transformLines lines'' <> end
       transformLines = foldr ((\line acc -> line <> Builder.singleton '\n' <> acc) . transformLine) mempty
       transformLine line =
         if Lazy.Text.null (Builder.toLazyText line)
