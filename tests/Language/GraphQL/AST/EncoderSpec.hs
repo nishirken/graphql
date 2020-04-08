@@ -111,6 +111,6 @@ spec = do
   field(message: """
     line1
     line2
-  """)
+""")
 }
 |]
