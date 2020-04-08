@@ -69,13 +69,12 @@ spec = do
 """|]
             it "encodes as one line string if has escaped symbols" $ do
                 let
-                  genNotAllowedSymbol = do
-                    oneof
-                      [ choose ('\x0000', '\x0008')
-                      , choose ('\x000B', '\x000C')
-                      , choose ('\x000E', '\x001F')
-                      , pure '\x007F'
-                      ]
+                  genNotAllowedSymbol = oneof
+                    [ choose ('\x0000', '\x0008')
+                    , choose ('\x000B', '\x000C')
+                    , choose ('\x000E', '\x001F')
+                    , pure '\x007F'
+                    ]
 
                 forAll genNotAllowedSymbol $ \x -> do
                     let
@@ -86,7 +85,7 @@ spec = do
                     shouldEndWith (unpack encoded) "\""
                     shouldNotContain (unpack encoded) "\"\"\""
 
-            it "Hello world" $ value pretty (String $ "Hello,\n  World!\n\nYours,\n  GraphQL.")
+            it "Hello world" $ value pretty (String "Hello,\n  World!\n\nYours,\n  GraphQL.")
               `shouldBe` [r|"""
   Hello,
     World!
@@ -95,8 +94,8 @@ spec = do
     GraphQL.
 """|]
 
-            it "oneline if has only newlines" $ value pretty (String $ "\n\n") `shouldBe` "\"\\n\\n\""
-            it "skip trailing whitespaces" $ value pretty (String $ "  Short\ntext    ")
+            it "oneline if has only newlines" $ value pretty (String "\n\n") `shouldBe` "\"\\n\\n\""
+            it "skip trailing whitespaces" $ value pretty (String "  Short\ntext    ")
               `shouldBe` [r|"""
   Short
   text

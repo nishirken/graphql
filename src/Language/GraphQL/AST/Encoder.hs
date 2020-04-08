@@ -248,11 +248,11 @@ stringValue (Pretty indentation) string =
       encoded [] = oneLine string
       encoded [line] = oneLine string
       encoded lines' = start <> transformLines lines' <> end
-      transformLines lines' = foldr (\line acc -> line <> Builder.singleton '\n' <> acc) mempty $ map transformLine lines'
+      transformLines = foldr ((\line acc -> line <> Builder.singleton '\n' <> acc) . transformLine) mempty
       transformLine line =
         if Lazy.Text.null (Builder.toLazyText line)
         then line
-        else (Builder.fromLazyText $ indent (indentation + 1)) <> line
+        else Builder.fromLazyText (indent (indentation + 1)) <> line
 
 escape :: Char -> Builder
 escape char'
