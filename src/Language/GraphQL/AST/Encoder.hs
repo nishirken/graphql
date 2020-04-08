@@ -236,10 +236,9 @@ stringValue (Pretty indentation) string =
   else Builder.toLazyText $ encoded lines
     where
       isNewline char = char == '\n' || char == '\r'
-      hasEscaped = Text.any (\x -> not $ isAllowed x)
+      hasEscaped = Text.any (not . isAllowed)
       isAllowed char =
-          if char < '\x0020' then char == '\t' || isNewline char
-          else char /= '\x007F'
+          char == '\t' || isNewline char || (char >= '\x0020' && char /= '\x007F')
 
       tripleQuote = Builder.fromText "\"\"\""
       start = tripleQuote <> Builder.singleton '\n'
