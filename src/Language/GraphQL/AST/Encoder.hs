@@ -233,7 +233,7 @@ stringValue Minified string = Builder.toLazyText
 stringValue (Pretty indentation) string =
   if hasEscaped string
   then stringValue Minified string
-  else Builder.toLazyText $ encoded lines
+  else Builder.toLazyText $ encoded lines'
     where
       isNewline char = char == '\n' || char == '\r'
       hasEscaped = Text.any (not . isAllowed)
@@ -244,7 +244,7 @@ stringValue (Pretty indentation) string =
       start = tripleQuote <> Builder.singleton '\n'
       end = tripleQuote
 
-      lines = map Builder.fromText $ Text.split isNewline (Text.strip $ Text.replace "\r\n" "\n" string)
+      lines' = map Builder.fromText $ Text.split isNewline (Text.strip $ Text.replace "\r\n" "\n" string)
       encoded [] = oneLine string
       encoded [_] = oneLine string
       encoded lines'' = start <> transformLines lines'' <> end
