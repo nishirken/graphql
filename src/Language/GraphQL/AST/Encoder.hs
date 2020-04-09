@@ -53,7 +53,7 @@ document formatter defs
     executableDefinition (ExecutableDefinition x) acc = definition formatter x : acc
     executableDefinition _ acc = acc
 
--- | Converts a 'Full.ExecutableDefinition' into a string.
+-- | Converts a t'Full.ExecutableDefinition' into a string.
 definition :: Formatter -> ExecutableDefinition -> Lazy.Text
 definition formatter x
     | Pretty _ <- formatter = Lazy.Text.snoc (encodeDefinition x) '\n'
