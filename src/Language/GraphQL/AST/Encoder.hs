@@ -243,7 +243,7 @@ stringValue (Pretty indentation) string =
 
       tripleQuote = Builder.fromText "\"\"\""
       start = tripleQuote <> Builder.singleton '\n'
-      end = tripleQuote
+      end = Builder.fromLazyText (indent indentation) <> tripleQuote
 
       strip = Text.dropWhile isWhiteSpace . Text.dropWhileEnd isWhiteSpace
       lines' = map Builder.fromText $ Text.split isNewline (Text.replace "\r\n" "\n" $ strip string)
