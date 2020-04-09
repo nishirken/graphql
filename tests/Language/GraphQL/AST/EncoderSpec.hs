@@ -91,7 +91,28 @@ spec = do
     GraphQL.
 """|]
 
-            it "oneline if has only newlines" $ value pretty (String "\n\n") `shouldBe` "\"\\n\\n\""
+            it "has only newlines" $ value pretty (String "\n") `shouldBe` [r|"""
+
+
+"""|]
+            it "has newlines and one symbol at the begining" $
+              value pretty (String "a\n\n") `shouldBe` [r|"""
+  a
+
+
+"""|]
+            it "has newlines and one symbol at the end" $
+              value pretty (String "\n\na") `shouldBe` [r|"""
+
+
+  a
+"""|]
+            it "has newlines and one symbol in the middle" $
+              value pretty (String "\na\n") `shouldBe` [r|"""
+
+  a
+
+"""|]
             it "skip trailing whitespaces" $ value pretty (String "  Short\ntext    ")
               `shouldBe` [r|"""
   Short

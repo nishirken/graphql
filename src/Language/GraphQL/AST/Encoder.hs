@@ -235,6 +235,7 @@ stringValue (Pretty indentation) string =
   then stringValue Minified string
   else Builder.toLazyText $ encoded lines'
     where
+      isWhiteSpace char = char == ' ' || char == '\t'
       isNewline char = char == '\n' || char == '\r'
       hasEscaped = Text.any (not . isAllowed)
       isAllowed char =
@@ -244,7 +245,8 @@ stringValue (Pretty indentation) string =
       start = tripleQuote <> Builder.singleton '\n'
       end = tripleQuote
 
-      lines' = map Builder.fromText $ Text.split isNewline (Text.strip $ Text.replace "\r\n" "\n" string)
+      strip = Text.dropWhile isWhiteSpace . Text.dropWhileEnd isWhiteSpace
+      lines' = map Builder.fromText $ Text.split isNewline (Text.replace "\r\n" "\n" $ strip string)
       encoded [] = oneLine string
       encoded [_] = oneLine string
       encoded lines'' = start <> transformLines lines'' <> end
