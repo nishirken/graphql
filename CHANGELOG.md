@@ -7,6 +7,11 @@ and this project adheres to
 [Haskell Package Versioning Policy](https://pvp.haskell.org/).
 
 ## [Unreleased]
+### Fixed
+- Result of null encoding
+- Block strings encoding
+- Result of tab and newline encoding
+
 ### Added
 - AST for the GraphQL schema.
 - Type system definition parser.
